@@ -1,6 +1,7 @@
+require("dotenv").config();
 var jwt = require("jsonwebtoken");
-const modelUsers = require("../Models/model_users.js");
-let secret = "%)$2sF55Idf(Rm&jyPnkqAL^+8m4dSw)";
+const modelUsers = require("../models/user_model.js");
+let secret = process.env.SECRET_KEY;
 
 const generateToken = (user_info, callback) => {
   let token = jwt.sign(
@@ -22,17 +23,17 @@ const validateToken = (token, callback) => {
     if (error) {
       return callback(false, null);
     }
-    console.log("Decoded: ", decoded);
+    /* console.log("Decoded: ", decoded); */
     let loggedUser = decoded.data.username;
-    console.log("User Authorized: " + loggedUser);
-    console.log("Token: " + token);
+    /* console.log("User Authorized: " + loggedUser); */
+    /* console.log("Token: " + token); */
     modelUsers
       .findOne({ username: loggedUser })
       .then(user => {
         if (!user) {
           return callback(false, null);
         }
-        console.log("User founded:", user);
+        /* console.log("User founded:", user); */
         return callback(true, user);
       })
   });
@@ -56,7 +57,7 @@ const auth = function(req, res, next) {
       validateToken(req.headers.authorization, (result, user) => {
         if (result) {
           req.loggedUser = user;
-          console.log("logged user: " + user);
+          /* console.log("logged user: " + user); */
           return next();
         } else {
           return res.status(401).json({ message: "Not authorized" });

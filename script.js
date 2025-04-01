@@ -2,15 +2,17 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
 const express = require("express");
-/* const cors = require('cors'); */
-/* const utilities = require("./utilities/utilities"); */
+const cors = require('cors');
+const utilities = require("./utilities/utilities");
+const user_route = require("./routes/user_route.js");
 const urimongodb = process.env.MONGO_URI;
 const port = process.env.PORT || 5000;
 const app = express();
 
 app.use(express.json());
-/* app.use(utilities.auth); */
-/* app.use(cors()); */
+app.use(utilities.auth);
+app.use("/users", user_route);
+app.use(cors());
 
 app.listen(port, () => {
   console.log("Server is running on port " + port);
