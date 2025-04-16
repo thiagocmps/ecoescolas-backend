@@ -24,11 +24,11 @@ const validateToken = (token, callback) => {
       return callback(false, null);
     }
     /* console.log("Decoded: ", decoded); */
-    let loggedUser = decoded.data.username;
+    let loggedUser = decoded.data.email;
     /* console.log("User Authorized: " + loggedUser); */
     /* console.log("Token: " + token); */
     modelUsers
-      .findOne({ username: loggedUser })
+      .findOne({ email: loggedUser })
       .then(user => {
         if (!user) {
           return callback(false, null);
@@ -40,8 +40,8 @@ const validateToken = (token, callback) => {
 };
 
 
-const isAdmin = function(req, res, next) {
-  if (req.loggedUser.role === "admin") {
+const isProfessor = function(req, res, next) {
+  if (req.loggedUser.role === "professor") {
     return next();
   } else {
     return res.status(401).json({ message: "Not authorized" });
@@ -66,7 +66,7 @@ const auth = function(req, res, next) {
     }
 } 
 
-exports.isAdmin = isAdmin;
+exports.isProfessor = isProfessor;
 exports.generateToken = generateToken;
 exports.validateToken = validateToken;
 exports.auth = auth;

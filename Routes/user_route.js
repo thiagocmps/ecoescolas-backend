@@ -8,11 +8,16 @@ userRouter.post('/login', function (req, res) {
     controllerUsers.login(req, res);
 });
 
+userRouter.post('/validateEmail', function (req, res) {
+    controllerUsers.validateEmail(req, res);
+});
+
 /* Register */
 userRouter.post('/register', [
-    body('username').notEmpty().escape(), 
+    body('firstName').notEmpty().escape(),
+    body('lastName').notEmpty().escape(),
     body('password').notEmpty().escape(),
-    body('role').optional().escape()
+    body('email').isEmail().normalizeEmail(),
 ],  function (req, res) {
     const errors = validationResult(req); 
     if (errors.isEmpty()) {
