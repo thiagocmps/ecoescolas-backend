@@ -12,9 +12,10 @@ const app = express();
 app.use(express.json());
 app.use(utilities.auth);
 app.use("/users", user_route);
+
 app.use(cors());
 
-app.listen(port, () => {
+app.listen(port,/*  '0.0.0.0', */ () => {
   console.log("Server is running on port " + port);
   mongoose.connect(urimongodb);
 });

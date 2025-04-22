@@ -8,8 +8,8 @@ userRouter.post('/login', function (req, res) {
     controllerUsers.login(req, res);
 });
 
-userRouter.post('/validateEmail', function (req, res) {
-    controllerUsers.validateEmail(req, res);
+userRouter.post('/sendmail', function (req, res) {
+    controllerUsers.sendEmail(req, res);
 });
 
 /* Register */

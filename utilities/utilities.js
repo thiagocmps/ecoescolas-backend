@@ -44,13 +44,13 @@ const isProfessor = function(req, res, next) {
   if (req.loggedUser.role === "professor") {
     return next();
   } else {
-    return res.status(401).json({ message: "Not authorized" });
+    return res.status(401).json({ message: "Not authorized - Not a Professor" });
   }
 };
 
 
 const auth = function(req, res, next) {
-    let exception = ["/users/login", "/users/register"];
+    let exception = ["/users/login", "/users/register", "/users/sendmail"];
     if (exception.indexOf(req.url) >= 0) {
       return next();
     } else {
