@@ -1,5 +1,5 @@
 const bcrypt = require("bcrypt");
-const modelUser = require("../Models/user_model");
+const modelUser = require("../Models/users_model");
 const utilities = require("../utilities/utilities.js");
 /* const bodyParser = required("body-parser"); */
 const nodemailer = require("nodemailer");
