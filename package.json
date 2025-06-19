@@ -1,5 +1,4 @@
 {
-  "main": "api/index.js",
   "dependencies": {
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
@@ -13,6 +12,7 @@
   },
   "scripts": {
     "dev": "vercel dev",
+    "start": "node script.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   }
 }
