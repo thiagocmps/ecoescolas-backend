@@ -24,7 +24,6 @@ const login = (req, res) => {
           .compare(req.body.password, user[0].password)
           .then((result) => {
             if (result) {
-              /* console.log(result); */
               utilities.generateToken(
                 {
                   email: req.body.email,
@@ -32,6 +31,7 @@ const login = (req, res) => {
                   id: user[0]._id,
                   firstName: user[0].firstName,
                   lastName: user[0].lastName,
+                  status: user[0].status,
                   createdAt: user[0].createdAt,
                 },
                 (token) => {
@@ -104,7 +104,6 @@ const register = (req, res) => {
         role: currentEmail,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
-        numMecanografico: numMecanografico,
         createdAt: Date.now(),
       });
 
@@ -145,12 +144,56 @@ const sendEmail = (req, res) => {
   };
 
   transporter.sendMail(mailData, function (err, info) {
-    if (err) console.log(err); 
+    if (err) console.log(err);
     else console.log(info);
     res.status(200).send("Email sent successfully!");
   });
 };
 
+const getUserById = (req, res) => {
+  modelUser
+    .findById(req.params.id)
+    .then((user) => {
+      if (user) {
+        res.status(200).json(user);
+      } else {
+        res.status(404).send("Utilizador não encontrado");
+      }
+    })
+    .catch((error) => {});
+};
+
+const getAllUsers = (req, res) => {
+  console.log("tamo dentro do getAllUsers");
+  modelUser
+    .find()
+    .then((users) => {
+            console.log("tamo dentro do .then")
+      res.status(200).json(users);
+    })
+    .catch((error) => {
+      res.status(400).send(error);
+    });
+};
+
+const patchUser = (req, res) => {
+  modelUser
+    .findByIdAndUpdate(req.params.id, req.body, { new: true })
+    .then((user) => {
+      if (user) {
+        res.status(200).json(user);
+      } else {
+        res.status(404).send("Utilizador não encontrado");
+      }
+    })
+    .catch((error) => {
+      res.status(400).send(error);
+    });
+};
+
+exports.patchUser = patchUser;
+exports.getAllUsers = getAllUsers;
+exports.getUserById = getUserById;
 exports.register = register;
 exports.login = login;
 exports.sendEmail = sendEmail;

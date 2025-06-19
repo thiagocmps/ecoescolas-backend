@@ -3,7 +3,7 @@ var jwt = require("jsonwebtoken");
 const modelUsers = require("../Models/users_model.js");
 let secret = process.env.SECRET_KEY;
 
-const generateToken = (user_info, callback) => {
+ const generateToken = (user_info, callback) => {
   let token = jwt.sign(
     {
       data: user_info,
@@ -14,7 +14,7 @@ const generateToken = (user_info, callback) => {
   return callback(token);
 };
 
-const validateToken = (token, callback) => {
+ const validateToken = (token, callback) => {
   if (!token) {
     return callback(false, null);
   }
@@ -36,7 +36,7 @@ const validateToken = (token, callback) => {
   });
 };
 
-const isProfessor = function (req, res, next) {
+ const isProfessor = function (req, res, next) {
   if (req.loggedUser.role === "professor") {
     return next();
   } else {
@@ -46,7 +46,15 @@ const isProfessor = function (req, res, next) {
   }
 };
 
-const auth = function (req, res, next) {
+ const isWorker = function (req, res, next) {
+  if (req.loggedUser.role === "worker") {
+    return next();
+  } else {
+    return res.status(401).json({ message: "Not authorized - Not a Worker" });
+  }
+};
+
+ const auth = function (req, res, next) {
   let exception = ["/users/login", "/users/register", "/users/sendmail"];
   if (exception.indexOf(req.url) >= 0) {
     return next();
@@ -64,6 +72,7 @@ const auth = function (req, res, next) {
 };
 
 exports.isProfessor = isProfessor;
+exports.isWorker = isWorker;
 exports.generateToken = generateToken;
 exports.validateToken = validateToken;
 exports.auth = auth;
