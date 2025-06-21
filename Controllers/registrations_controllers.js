@@ -89,6 +89,7 @@ const addRegistration = async (req, res) => {
 
     const registration = new modelRegistration({
       activityId: req.body.activityId,
+      creatorId: req.body.creatorId,
       userId: req.loggedUser._id,
       status: "pending",
     });

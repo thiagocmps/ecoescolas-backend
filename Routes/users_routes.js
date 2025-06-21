@@ -43,4 +43,8 @@ userRouter.get("/", function (req, res) {
   controllerUsers.getAllUsers(req, res);
 });
 
+userRouter.delete("/delete/:id", function (req, res) {
+  controllerUsers.deleteUser(req, res);
+});
+
 module.exports = userRouter;

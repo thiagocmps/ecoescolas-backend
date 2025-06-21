@@ -3,6 +3,9 @@ const modelUser = require("../Models/users_model");
 const utilities = require("../utilities/utilities.js");
 /* const bodyParser = required("body-parser"); */
 const nodemailer = require("nodemailer");
+const Report = require("../Models/reports_model");
+const Activity = require("../Models/activities_model");
+const registrations = require("../Models/registrations_model");
 
 const transporter = nodemailer.createTransport({
   port: 465, // true for 465, false for other ports
@@ -191,6 +194,33 @@ const patchUser = (req, res) => {
     });
 };
 
+const deleteUser = (req, res) => {
+  modelUser
+    .findByIdAndDelete(req.params.id)
+    .then((user) => {
+      if (user) {
+        res.status(200).json(user);
+        Promise.all([
+          Report.deleteMany({ userId: user._id }),
+          Activity.deleteMany({ creatorId: user._id }),
+          registrations.deleteMany({ creatorId: user._id })
+        ])
+          .then(() => {
+            console.log("Associated reports, activities, and registrations deleted successfully.");
+          })
+          .catch((err) => {
+            console.error("Error deleting associated data:", err);
+          });
+      } else {
+        res.status(404).send("Utilizador não encontrado");
+      }
+    })
+    .catch((error) => {
+      res.status(400).send(error);
+    });
+};
+
+exports.deleteUser = deleteUser;
 exports.patchUser = patchUser;
 exports.getAllUsers = getAllUsers;
 exports.getUserById = getUserById;
