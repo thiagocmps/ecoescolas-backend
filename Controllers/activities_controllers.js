@@ -46,6 +46,7 @@ const getAllMembers = async (req, res) => {
       return {
         ...user,
         registrationData: {
+          images: reg.images,
           status: reg.status,
           createdAt: reg.createdAt,
         },

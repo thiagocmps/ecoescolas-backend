@@ -25,6 +25,10 @@ activityRouter.get("/registrations/filter", function (req, res) {
   controllerRegistrations.getFilterRegistration(req, res);
 });
 
+activityRouter.get("/registrations/checkStatus/:id", function (req, res) {
+  controllerRegistrations.isRegistrationValidated(req, res);
+});
+
 /* activityRouter.delete(
   "/registrations/delete/:id",
   utilities.isProfessor,

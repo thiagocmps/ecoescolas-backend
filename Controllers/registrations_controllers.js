@@ -15,6 +15,22 @@ const deleteRegistration = async (req, res) => {
   }
 };
 
+const isRegistrationValidated = async (req, res) => {
+  try {
+    const registration = await modelRegistration.findOne({
+      userId: req.loggedUser._id,
+      activityId: req.params.id,
+    });
+    if (!registration) {
+      return res.json();
+    }
+    const status = registration.status === "validated" ? true : false;
+    res.status(200).json(status);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 const deleteRegistrationByUser = async (req, res) => {
   try {
     const registration = await modelRegistration.findOneAndDelete({
@@ -116,17 +132,23 @@ const getFilterRegistration = async (req, res) => {
 
 const updateRegistration = async (req, res) => {
   try {
-    const { userId, activityId, status } = req.body;
+    const { userId, activityId, ...updateFields } = req.body;
 
-    if (!userId || !activityId || !status) {
+    if (!userId || !activityId) {
       return res
         .status(400)
-        .json({ message: "Parâmetros obrigatórios ausentes." });
+        .json({ message: "Parâmetros obrigatórios ausentes: userId e activityId." });
+    }
+
+    if (Object.keys(updateFields).length === 0) {
+      return res
+        .status(400)
+        .json({ message: "Nenhum campo para atualizar foi fornecido." });
     }
 
     const registration = await modelRegistration.findOneAndUpdate(
       { userId, activityId },
-      { status },
+      updateFields,
       { new: true }
     );
 
@@ -134,7 +156,8 @@ const updateRegistration = async (req, res) => {
       console.log("Registo não encontrado");
       return res.status(404).json({ message: "Registo não encontrado" });
     }
-    console.log(registration);
+
+    console.log("Registo atualizado:", registration);
     res.json(registration);
   } catch (error) {
     console.error("Erro ao atualizar o registo:", error);
@@ -142,6 +165,9 @@ const updateRegistration = async (req, res) => {
   }
 };
 
+
+/* exports.deleteRegistration = deleteRegistration; */
+exports.isRegistrationValidated = isRegistrationValidated;
 exports.deleteRegistrationByUser = deleteRegistrationByUser;
 exports.getFilterRegistration = getFilterRegistration;
 exports.addRegistration = addRegistration;
