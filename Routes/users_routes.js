@@ -47,4 +47,8 @@ userRouter.delete("/delete/:id", function (req, res) {
   controllerUsers.deleteUser(req, res);
 });
 
+userRouter.put("/update", function (req, res) {
+  controllerUsers.updateUser(req, res);
+})
+
 module.exports = userRouter;

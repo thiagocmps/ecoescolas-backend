@@ -110,7 +110,6 @@ const register = (req, res) => {
         createdAt: Date.now(),
       });
 
-      // find duplicate users
       modelUser
         .find({ email: req.body.email })
         .then((user) => {
@@ -171,7 +170,7 @@ const getAllUsers = (req, res) => {
   modelUser
     .find()
     .then((users) => {
-            console.log("tamo dentro do .then")
+      console.log("tamo dentro do .then");
       res.status(200).json(users);
     })
     .catch((error) => {
@@ -203,10 +202,14 @@ const deleteUser = (req, res) => {
         Promise.all([
           Report.deleteMany({ userId: user._id }),
           Activity.deleteMany({ creatorId: user._id }),
-          registrations.deleteMany({ creatorId: user._id })
+          registrations.deleteMany({
+            $or: [{ creatorId: user._id }, { userId: user._id }],
+          }),
         ])
           .then(() => {
-            console.log("Associated reports, activities, and registrations deleted successfully.");
+            console.log(
+              "Associated reports, activities, and registrations deleted successfully."
+            );
           })
           .catch((err) => {
             console.error("Error deleting associated data:", err);
@@ -218,6 +221,11 @@ const deleteUser = (req, res) => {
     .catch((error) => {
       res.status(400).send(error);
     });
+};
+
+const updateUser = (req, res) => {
+  try {
+  } catch (error) {}
 };
 
 exports.deleteUser = deleteUser;
