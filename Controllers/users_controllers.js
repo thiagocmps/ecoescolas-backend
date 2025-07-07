@@ -78,7 +78,7 @@ const register = (req, res) => {
   if (!isStudentEmail && !isProfessorEmail) {
     return res
       .status(406)
-      .send("Invalid email format. Must be a student or professor email.");
+      .send("Invalid email format. Must be a student or professor email");
   } else if (!isStudentEmail && isProfessorEmail == true) {
     currentEmail = "professor";
   } else if (isStudentEmail == true) {
@@ -141,7 +141,7 @@ const sendEmail = (req, res) => {
   const mailData = {
     from: "thiagocvsouza.dev@gmail.com", // sender address
     to: email, // list of receivers
-    subject: "Código de verificação: ", // Subject line
+    subject: "Código de verificação", // Subject line
     text: "Aqui está o seu código de verificação: " + code, // plain text body
   };
 

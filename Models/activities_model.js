@@ -7,9 +7,12 @@ const activitySchema = new mongoose.Schema({
   date: { type: String, required: true },
   visible: { type: Boolean, required: true, default: true },
   createdAt: { type: Date, default: Date.now },
-  info: { type: Object, required: true,
+  message: { type: [Object], required: false },
+  info: {
+    type: Object,
+    required: true,
     enquadramento: { type: String, required: false, default: "" },
-    objetivos: { type: String, required: true, default: ""  },
+    objetivos: { type: String, required: true, default: "" },
     atividade: { type: String, required: false, default: "" },
     info_solicitada: { type: String, required: false, default: "" },
     prazos: { type: String, required: true, default: "" },
@@ -23,4 +26,4 @@ const activitySchema = new mongoose.Schema({
 
 const Activities = mongoose.model("Activities", activitySchema);
 
-module.exports = Activities;  
+module.exports = Activities;
