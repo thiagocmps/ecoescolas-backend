@@ -17,7 +17,7 @@ app.use(
       "http://localhost:8081",
       "http://localhost:5000",
       "http://192.168.1.217:8081",
-      "https://cerulean-snickerdoodle-e5f9b7.netlify.app/"
+      "https://cerulean-snickerdoodle-e5f9b7.netlify.app"
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
