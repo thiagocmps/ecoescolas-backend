@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const activitySchema = new mongoose.Schema({
   creatorId: { type: String, required: true },
   title: { type: String, required: true },
+  type: { type: String, required: true, default: "normal" },
   description: { type: String, required: true },
   date: { type: String, required: true },
   visible: { type: Boolean, required: true, default: true },

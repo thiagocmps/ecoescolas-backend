@@ -5,8 +5,16 @@ const registrationsSchema = new mongoose.Schema({
   userId: { type: String, required: true },
   creatorId: { type: String, required: true },
   images: { type: [String], required: false },
+  monthlyExpense: {
+    type: {
+      gas: { type: String },
+      water: { type: String },
+      light: { type: String },
+    },
+    required: false,
+  },
   status: { type: String, required: false, default: "pending" },
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: Date.now },
 });
 
 const Registrations = mongoose.model("Registrations", registrationsSchema);

@@ -66,6 +66,7 @@ const addActivity = async (req, res) => {
     const activity = new modelActivity({
       title: req.body.title,
       description: req.body.description,
+      type: req.body.type,
       creatorId: req.loggedUser._id,
       date: req.body.date,
       info: req.body.info,
