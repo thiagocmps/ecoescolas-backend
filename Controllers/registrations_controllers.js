@@ -142,40 +142,39 @@ const updateRegistration = async (req, res) => {
 
     const updateQuery = {};
 
-    // Atualiza os campos simples
+    // Atualiza campos simples
     if (Object.keys(otherFields).length > 0) {
       Object.assign(updateQuery, { $set: otherFields });
     }
 
     // Se for para adicionar monthlyExpense
-    if (monthlyExpense) {
+    if (monthlyExpense && monthlyExpense.date) {
       const registration = await modelRegistration.findOne({ userId, activityId });
 
       if (!registration) {
         return res.status(404).json({ message: "Registo não encontrado" });
       }
 
-      const now = new Date();
-      const currentMonth = now.getMonth(); // 0-indexed
-      const currentYear = now.getFullYear();
+      const selectedDate = new Date(monthlyExpense.date);
+      const selectedMonth = selectedDate.getMonth();
+      const selectedYear = selectedDate.getFullYear();
 
-      const hasCurrentMonthExpense = registration.monthlyExpense?.some((entry) => {
-        const date = new Date(entry.createdAt);
+      const hasExpenseInSameMonth = registration.monthlyExpense?.some((entry) => {
+        const date = new Date(entry.date || entry.createdAt); // compatível com versões antigas
         return (
-          date.getMonth() === currentMonth && date.getFullYear() === currentYear
+          date.getMonth() === selectedMonth && date.getFullYear() === selectedYear
         );
       });
 
-      if (hasCurrentMonthExpense) {
+      if (hasExpenseInSameMonth) {
         return res.status(400).json({
-          message: "Já existe um gasto mensal para este mês",
+          message: "Já existe um gasto mensal para este mês.",
         });
       }
 
       updateQuery.$push = {
         monthlyExpense: {
           ...monthlyExpense,
-          createdAt: now,
         },
       };
     }
@@ -194,10 +193,11 @@ const updateRegistration = async (req, res) => {
 
     res.json(updatedRegistration);
   } catch (error) {
-    console.error("Erro ao atualizar o registo:", error);
+    console.error("Erro ao atualizar o registo:", error); 
     res.status(500).json({ error: error.message });
   }
 };
+
 
 
 

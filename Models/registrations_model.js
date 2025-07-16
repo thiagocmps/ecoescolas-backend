@@ -5,7 +5,7 @@ const monthlyExpenseSchema = new mongoose.Schema(
     gas: { type: String },
     water: { type: String },
     light: { type: String },
-    createdAt: { type: Date, default: Date.now },
+    date: { type: Date },
   },
   { _id: false } // evitar criação de _id automático para subdocumentos, se quiser
 );

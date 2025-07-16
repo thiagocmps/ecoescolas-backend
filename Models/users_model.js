@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
     lastName: { type: String, required: true },
     status: { type: String, required: true, default: 'pending' },
     role: { type: String, required: false },
-    createdAt: { type: Date, default: Date.now },
+    createdAt: { type: Date },
 });
 
 const Users = mongoose.model('Users', userSchema);
