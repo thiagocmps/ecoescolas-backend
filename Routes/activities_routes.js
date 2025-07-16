@@ -13,6 +13,10 @@ activityRouter.get("/registrations/user", function (req, res) {
   controllerRegistrations.getRegistrationByUser(req, res);
 }); /* FEITO */
 
+activityRouter.get("/registrations/user/one", function (req, res) {
+  controllerRegistrations.getRegistrationByActivityIdUserId(req, res)
+})
+
 activityRouter.get("/registrations", function (req, res) {
   controllerRegistrations.getAllRegistrations(req, res);
 }); /* FEITO */

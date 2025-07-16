@@ -15,6 +15,27 @@ const deleteRegistration = async (req, res) => {
   }
 };
 
+const getRegistrationByActivityIdUserId = async (req, res) => {
+  const { activityId, userId } = req.query;
+
+  if (!activityId || !userId) {
+    return res
+      .status(400)
+      .json({ message: "activityId e userId são obrigatórios" });
+  }
+
+  try {
+    const registros = await Registration.find({ activityId, userId }).sort({
+      "monthlyExpense.date": 1,
+    });
+
+    return res.json(registros);
+  } catch (error) {
+    console.error("Erro ao buscar registros:", error);
+    return res.status(500).json({ message: "Erro interno no servidor" });
+  }
+};
+
 const isRegistrationValidated = async (req, res) => {
   try {
     const registration = await modelRegistration.findOne({
@@ -149,7 +170,10 @@ const updateRegistration = async (req, res) => {
 
     // Se for para adicionar monthlyExpense
     if (monthlyExpense && monthlyExpense.date) {
-      const registration = await modelRegistration.findOne({ userId, activityId });
+      const registration = await modelRegistration.findOne({
+        userId,
+        activityId,
+      });
 
       if (!registration) {
         return res.status(404).json({ message: "Registo não encontrado" });
@@ -159,12 +183,15 @@ const updateRegistration = async (req, res) => {
       const selectedMonth = selectedDate.getMonth();
       const selectedYear = selectedDate.getFullYear();
 
-      const hasExpenseInSameMonth = registration.monthlyExpense?.some((entry) => {
-        const date = new Date(entry.date || entry.createdAt); // compatível com versões antigas
-        return (
-          date.getMonth() === selectedMonth && date.getFullYear() === selectedYear
-        );
-      });
+      const hasExpenseInSameMonth = registration.monthlyExpense?.some(
+        (entry) => {
+          const date = new Date(entry.date || entry.createdAt); // compatível com versões antigas
+          return (
+            date.getMonth() === selectedMonth &&
+            date.getFullYear() === selectedYear
+          );
+        }
+      );
 
       if (hasExpenseInSameMonth) {
         return res.status(400).json({
@@ -193,16 +220,12 @@ const updateRegistration = async (req, res) => {
 
     res.json(updatedRegistration);
   } catch (error) {
-    console.error("Erro ao atualizar o registo:", error); 
+    console.error("Erro ao atualizar o registo:", error);
     res.status(500).json({ error: error.message });
   }
 };
 
-
-
-
-
-/* exports.deleteRegistration = deleteRegistration; */
+exports.getRegistrationByActivityIdUserId = getRegistrationByActivityIdUserId;
 exports.isRegistrationValidated = isRegistrationValidated;
 exports.deleteRegistrationByUser = deleteRegistrationByUser;
 exports.getFilterRegistration = getFilterRegistration;
