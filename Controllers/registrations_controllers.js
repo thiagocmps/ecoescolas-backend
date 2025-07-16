@@ -132,38 +132,74 @@ const getFilterRegistration = async (req, res) => {
 
 const updateRegistration = async (req, res) => {
   try {
-    const { userId, activityId, ...updateFields } = req.body;
+    const { userId, activityId, monthlyExpense, ...otherFields } = req.body;
 
     if (!userId || !activityId) {
-      return res
-        .status(400)
-        .json({ message: "Parâmetros obrigatórios ausentes: userId e activityId." });
+      return res.status(400).json({
+        message: "Parâmetros obrigatórios ausentes: userId e activityId.",
+      });
     }
 
-    if (Object.keys(updateFields).length === 0) {
+    const updateQuery = {};
+
+    // Atualiza os campos simples
+    if (Object.keys(otherFields).length > 0) {
+      Object.assign(updateQuery, { $set: otherFields });
+    }
+
+    // Se for para adicionar monthlyExpense
+    if (monthlyExpense) {
+      const registration = await modelRegistration.findOne({ userId, activityId });
+
+      if (!registration) {
+        return res.status(404).json({ message: "Registo não encontrado" });
+      }
+
+      const now = new Date();
+      const currentMonth = now.getMonth(); // 0-indexed
+      const currentYear = now.getFullYear();
+
+      const hasCurrentMonthExpense = registration.monthlyExpense?.some((entry) => {
+        const date = new Date(entry.createdAt);
+        return (
+          date.getMonth() === currentMonth && date.getFullYear() === currentYear
+        );
+      });
+
+      if (hasCurrentMonthExpense) {
+        return res.status(400).json({
+          message: "Já existe um gasto mensal para este mês",
+        });
+      }
+
+      updateQuery.$push = {
+        monthlyExpense: {
+          ...monthlyExpense,
+          createdAt: now,
+        },
+      };
+    }
+
+    if (Object.keys(updateQuery).length === 0) {
       return res
         .status(400)
         .json({ message: "Nenhum campo para atualizar foi fornecido." });
     }
 
-    const registration = await modelRegistration.findOneAndUpdate(
+    const updatedRegistration = await modelRegistration.findOneAndUpdate(
       { userId, activityId },
-      updateFields,
+      updateQuery,
       { new: true }
     );
 
-    if (!registration) {
-      console.log("Registo não encontrado");
-      return res.status(404).json({ message: "Registo não encontrado" });
-    }
-
-    console.log("Registo atualizado:", registration);
-    res.json(registration);
+    res.json(updatedRegistration);
   } catch (error) {
     console.error("Erro ao atualizar o registo:", error);
     res.status(500).json({ error: error.message });
   }
 };
+
+
 
 
 /* exports.deleteRegistration = deleteRegistration; */
